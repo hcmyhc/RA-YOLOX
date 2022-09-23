@@ -1,0 +1,3 @@
+-f ../exps/example/yolox_voc/yolox_voc_s.py -d 1 -b 2 -c ../pretrained/yolox_s.pth  data_num_workers 0 num_classes 20 max_epoch 30 use_swinHead True
+2011-006777
+2011_003353
