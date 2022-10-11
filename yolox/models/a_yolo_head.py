@@ -12,7 +12,7 @@ import torch.nn.functional as F
 from yolox.utils import bboxes_iou, meshgrid
 
 from .losses import IOUloss
-from .network_blocks import BaseConv, DWConv
+from .network_blocks import BaseConv, DWConv, RepVGGBlock
 
 
 
@@ -61,21 +61,15 @@ class AYOLOXHead(nn.Module):
                     ),
             )
             self.stems_2.append(
-                BaseConv(
+                RepVGGBlock(
                     in_channels=int(256 * width),
                     out_channels=int(256 * width),
-                    ksize=3,
-                    stride=1,
-                    act=act,
                 ),
             )
             self.stems_3.append(
-                BaseConv(
+                RepVGGBlock(
                     in_channels=int(256 * width),
                     out_channels=int(256 * width),
-                    ksize=3,
-                    stride=1,
-                    act=act,
                 ),
             )
             self.cls_convs.append(
