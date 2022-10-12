@@ -105,15 +105,6 @@ def make_parser():
     )
     return parser
 
-def repvgg_model_convert(model:torch.nn.Module, save_path=None, do_copy=True):
-    if do_copy:
-        model = copy.deepcopy(model)
-    for module in model.modules():
-        if hasattr(module, 'switch_to_deploy'):
-            module.switch_to_deploy()
-    if save_path is not None:
-        torch.save(model.state_dict(), save_path)
-    return model
 
 
 @logger.catch
@@ -194,11 +185,23 @@ def main(exp, args, num_gpu):
         trt_file = None
         decoder = None
     model = repvgg_model_convert(model)
+    logger.info("repModel Summary: {}".format(get_model_info(model, exp.test_size)))
     # start evaluate
     *_, summary = evaluator.evaluate(
         model, is_distributed, args.fp16, trt_file, decoder, exp.test_size
     )
     logger.info("\n" + summary)
+
+
+def repvgg_model_convert(model:torch.nn.Module, save_path=None, do_copy=True):
+    if do_copy:
+        model = copy.deepcopy(model)
+    for module in model.modules():
+        if hasattr(module, 'switch_to_deploy'):
+            module.switch_to_deploy()
+    if save_path is not None:
+        torch.save(model.state_dict(), save_path)
+    return model
 
 
 if __name__ == "__main__":

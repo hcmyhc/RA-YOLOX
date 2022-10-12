@@ -21,7 +21,7 @@ class Exp(MyExp):
         self.hsv_prob = 1.0
         self.flip_prob = 0.5
         self.data_num_workers = 8
-        self.use_Head = "YOLO_Head"
+        self.use_Head = "ra_yolo_head"
         self.no_aug_epochs = 50
         self.no_QFL_epochs = 0
         self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]

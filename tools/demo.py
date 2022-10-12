@@ -5,6 +5,7 @@
 import argparse
 import os
 import time
+import copy
 from loguru import logger
 
 import cv2
@@ -14,7 +15,7 @@ import torch
 
 from yolox.data.data_augment import ValTransform
 from yolox.data.datasets import COCO_CLASSES
-from yolox.data.datasets import VOC_CLASSES
+# from yolox.data.datasets import VOC_CLASSES
 from yolox.exp import get_exp
 from yolox.utils import fuse_model, get_model_info, postprocess, vis
 
@@ -272,6 +273,7 @@ def main(exp, args):
         exp.test_size = (args.tsize, args.tsize)
 
     model = exp.get_model()
+
     logger.info("Model Summary: {}".format(get_model_info(model, exp.test_size)))
 
     if args.device == "gpu":
@@ -290,7 +292,8 @@ def main(exp, args):
         # load the model state dict
         model.load_state_dict(ckpt["model"])
         logger.info("loaded checkpoint done.")
-
+    model = repvgg_model_convert(model)
+    logger.info("repModel Summary: {}".format(get_model_info(model, exp.test_size)))
     if args.fuse:
         logger.info("\tFusing model...")
         model = fuse_model(model)
@@ -309,7 +312,7 @@ def main(exp, args):
         decoder = None
 
     predictor = Predictor(
-        model, exp, VOC_CLASSES, trt_file, decoder,
+        model, exp, COCO_CLASSES, trt_file, decoder,
         args.device, args.fp16, args.legacy,
     )
     current_time = time.localtime()
@@ -317,6 +320,17 @@ def main(exp, args):
         image_demo(predictor, vis_folder, args.path, current_time, args.save_result)
     elif args.demo == "video" or args.demo == "webcam":
         imageflow_demo(predictor, vis_folder, current_time, args)
+
+
+def repvgg_model_convert(model:torch.nn.Module, save_path=None, do_copy=True):
+    if do_copy:
+        model = copy.deepcopy(model)
+    for module in model.modules():
+        if hasattr(module, 'switch_to_deploy'):
+            module.switch_to_deploy()
+    if save_path is not None:
+        torch.save(model.state_dict(), save_path)
+    return model
 
 
 if __name__ == "__main__":

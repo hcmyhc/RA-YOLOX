@@ -21,18 +21,7 @@ class Exp(MyExp):
         self.mosaic_prob = 0.5
         self.enable_mixup = False
         self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
-        self.num_classes = 80
-        # Define yourself dataset path
-        self.data_dir = "../datasets/coco128"
-        self.train_ann = "instances_train2017.json"
-        self.val_ann = "instances_val2017.json"
-        self.max_epoch = 315
-        self.data_num_workers = 8
-        self.eval_interval = 5
-        self.no_aug_epochs = 300
-        self.no_QFL_epochs = 0
-        self.unfreeze_epoch = 0
-        self.warmup_epochs = 2
+        self.use_Head = "ra_yolo_head"
 
     def get_model(self, sublinear=False):
 

@@ -8,6 +8,7 @@ import random
 import torch
 import torch.distributed as dist
 import torch.nn as nn
+import copy
 
 from .base_exp import BaseExp
 
@@ -109,11 +110,12 @@ class Exp(BaseExp):
         # nms threshold
         self.nmsthre = 0.65
         self.no_QFL_epochs = 50
-        self.use_Head = "A_YOLO_Head"
+        self.use_Head = "YOLO_Head"
         self.unfreeze_epoch = 0
+        self.depoly = False
 
     def get_model(self):
-        from yolox.models import YOLOX, YOLOPAFPN, YOLOXHead, AYOLOXHead
+        from yolox.models import YOLOX, YOLOPAFPN, YOLOXHead, ra_YOLOXHead
 
         def init_yolo(M):
             for m in M.modules():
@@ -124,11 +126,12 @@ class Exp(BaseExp):
         if getattr(self, "model", None) is None:
             in_channels = [256, 512, 1024]
             backbone = YOLOPAFPN(self.depth, self.width, in_channels=in_channels, act=self.act)
-            if self.use_Head == "A_YOLO_Head":
-                head = AYOLOXHead(self.num_classes, self.width, in_channels=in_channels)
-            elif self.use_Head == "YOLO_Head":
+            if self.use_Head == "ra_yolo_head":
+                head = ra_YOLOXHead(self.num_classes, self.width, in_channels=in_channels)
+            else:
                 head = YOLOXHead(self.num_classes, self.width, in_channels=in_channels, act=self.act)
             self.model = YOLOX(backbone, head)
+
         self.model.apply(init_yolo)
         self.model.head.initialize_biases(1e-2)
         self.model.train()
@@ -328,3 +331,13 @@ class Exp(BaseExp):
 
     def eval(self, model, evaluator, is_distributed, half=False):
         return evaluator.evaluate(model, is_distributed, half)
+
+    def repvgg_model_convert(model: torch.nn.Module, save_path=None, do_copy=True):
+        if do_copy:
+            model = copy.deepcopy(model)
+        for module in model.modules():
+            if hasattr(module, 'switch_to_deploy'):
+                module.switch_to_deploy()
+        if save_path is not None:
+            torch.save(model.state_dict(), save_path)
+        return model

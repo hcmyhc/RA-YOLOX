@@ -28,7 +28,8 @@ class Exp(MyExp):
         self.max_epoch = 300
         self.data_num_workers = 8
         self.eval_interval = 5
-        self.no_aug_epochs = 15
+        self.no_aug_epochs = 14
         self.no_QFL_epochs = 0
         self.unfreeze_epoch = 0
         self.warmup_epochs = 5
+        self.use_Head = "ra_yolo_head"
