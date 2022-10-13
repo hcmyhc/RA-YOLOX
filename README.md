@@ -1,5 +1,4 @@
 <div align="center"><img src="rcurv.png" width="350"></div>
-<img src="rcurv.png" >
 
 ## Introduction
 RA-YOLOX: a novel re-parameterization align decoupled head and a novel label assignment scheme based on YOLOX
