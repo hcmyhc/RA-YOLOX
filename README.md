@@ -15,7 +15,7 @@ RA-YOLOX: a novel re-parameterization align decoupled head and a novel label ass
 |Model |size |mAP<sup>val<br>0.5:0.95  |Params<br>(M) |FLOPs<br>(G)| weights |
 | ------        |:---: | :---:    | :---:       |:---:     |:---:  |
 |[RA-YOLOX-s](./exps/default/ra_yolox_s.py)    |640  |42.8     |9.0 | 27.2 | [github](https://github.com/hcmyhc/RA-YOLOX/releases/download/weight/ra_yolox_s.pth) |
-|[RA-YOLOX-tiny](./exps/default/ra_yolox_tiny.py) |416  |34.3    |5.2 |6.8| github |
+|[RA-YOLOX-tiny](./exps/default/ra_yolox_tiny.py) |416  |34.3    |5.2 |6.8| [github](https://github.com/hcmyhc/RA-YOLOX/releases/download/weight/ra_yolox_tiny.pth) |
 |[RA-YOLOX-nano](./exps/default/ra_yolox_nano.py)    |416  |27.5    |1.5| 2.4 | github |
 
 
